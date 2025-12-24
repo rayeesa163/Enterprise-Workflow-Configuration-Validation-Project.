@@ -1,6 +1,6 @@
 import { Activity, UserPlus, FileCheck, Settings2, Shield, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { toast } from "sonner";
 
 interface Event {
   id: string;
@@ -63,6 +63,16 @@ const typeConfig: Record<Event["type"], { icon: typeof Activity; color: string; 
 };
 
 export function RecentEvents() {
+  const handleEventClick = (event: Event) => {
+    toast.info(event.title, {
+      description: `${event.description} • ${event.timestamp}`,
+      action: {
+        label: "View",
+        onClick: () => toast.success(`Opening ${event.type} details...`),
+      },
+    });
+  };
+
   return (
     <div className="rounded-lg border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "400ms" }}>
       <div className="mb-6 flex items-center justify-between">
@@ -85,7 +95,8 @@ export function RecentEvents() {
           return (
             <div 
               key={event.id}
-              className="flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-accent/50"
+              onClick={() => handleEventClick(event)}
+              className="flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-accent/50 cursor-pointer"
             >
               <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", config.bg)}>
                 <Icon className={cn("h-4 w-4", config.color)} />
