@@ -1,5 +1,6 @@
 import { CheckCircle2, XCircle, AlertTriangle, Settings, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ConfigRule {
   id: string;
@@ -85,6 +86,36 @@ const statusConfig = {
 export function ConfigurationRules() {
   const validCount = rules.filter(r => r.status === "valid").length;
   const totalCount = rules.length;
+
+  const handleViewAll = () => {
+    toast.info("Configuration Rules", {
+      description: `Viewing all ${totalCount} configuration rules`,
+    });
+  };
+
+  const handleRuleClick = (rule: ConfigRule) => {
+    if (rule.status === "invalid") {
+      toast.error(`${rule.name}`, {
+        description: rule.description,
+        action: {
+          label: "Fix Now",
+          onClick: () => toast.success("Opening fix wizard..."),
+        },
+      });
+    } else if (rule.status === "warning") {
+      toast.warning(`${rule.name}`, {
+        description: rule.description,
+        action: {
+          label: "Review",
+          onClick: () => toast.info("Opening review panel..."),
+        },
+      });
+    } else {
+      toast.success(`${rule.name}`, {
+        description: `Last validated: ${rule.lastValidated}`,
+      });
+    }
+  };
   
   return (
     <div className="rounded-lg border border-border bg-card p-6 animate-slide-up" style={{ animationDelay: "300ms" }}>
@@ -98,7 +129,10 @@ export function ConfigurationRules() {
             <p className="text-sm text-muted-foreground">{validCount}/{totalCount} rules passing validation</p>
           </div>
         </div>
-        <button className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-primary hover:bg-accent transition-colors">
+        <button 
+          onClick={handleViewAll}
+          className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-primary hover:bg-accent transition-colors"
+        >
           View All
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -112,6 +146,7 @@ export function ConfigurationRules() {
           return (
             <div 
               key={rule.id}
+              onClick={() => handleRuleClick(rule)}
               className="group flex items-center justify-between rounded-lg border border-border p-4 transition-all hover:border-primary/20 hover:bg-accent/50 cursor-pointer"
             >
               <div className="flex items-center gap-4">

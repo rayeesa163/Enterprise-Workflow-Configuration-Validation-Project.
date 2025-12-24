@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface MetricCardProps {
   title: string;
@@ -23,10 +24,21 @@ export function MetricCard({
   className,
   delay = 0 
 }: MetricCardProps) {
+  const handleClick = () => {
+    toast.info(title, {
+      description: `Current value: ${value}${subtitle ? ` • ${subtitle}` : ""}`,
+      action: {
+        label: "View Details",
+        onClick: () => toast.success(`Opening ${title} details...`),
+      },
+    });
+  };
+
   return (
     <div 
+      onClick={handleClick}
       className={cn(
-        "group relative overflow-hidden rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/20",
+        "group relative overflow-hidden rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/20 cursor-pointer",
         "animate-slide-up",
         className
       )}
